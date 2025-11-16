@@ -6,6 +6,11 @@ async function bootstrap() {
 
   console.info('process.env.APP_PORT', process.env.APP_PORT);
 
+  app.enableCors({
+    origin: ['http://localhost:5173', 'https://boostyou.us'],
+    methods: 'GET,POST,PUT,DELETE',
+  });
+
   await app.listen(process.env.APP_PORT ?? 8010);
 }
 bootstrap();
