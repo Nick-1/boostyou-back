@@ -1,0 +1,1 @@
+export const DEFAULT_STICKER_PRICE = 1.49;

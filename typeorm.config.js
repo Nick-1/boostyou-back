@@ -9,7 +9,7 @@ module.exports = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: ['dist/**/*.entity.js'],
+  entities: ['dist/**/**/*.entity.js'],
   migrations: ['dist/migrations/*.js'],
 
   synchronize: false,
