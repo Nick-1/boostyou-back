@@ -11,7 +11,7 @@ import {
 import { User } from '../user/user.entity';
 import { OrderItem } from '../order-item/order-item.entity';
 
-@Entity('orders')
+@Entity('order')
 export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,11 +19,8 @@ export class Order {
   @Column({ name: 'user_id' })
   userId: string;
 
-  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
-  items: OrderItem[];
-
   @Column({ type: 'numeric', precision: 10, scale: 2 })
-  totalPrice: string; // сума всіх item.subtotal
+  totalPrice: string;
 
   @Column({ default: 'USD' })
   currency: string;
@@ -39,6 +36,9 @@ export class Order {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
+  items: OrderItem[];
 
   @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

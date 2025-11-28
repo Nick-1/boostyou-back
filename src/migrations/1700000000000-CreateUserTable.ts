@@ -25,7 +25,13 @@ export class CreateUserTable1700000000000 implements MigrationInterface {
             default: `'customer'`,
           },
           {
-            name: 'passwordHash',
+            name: 'status',
+            type: 'varchar',
+            length: '30',
+            default: `'not verified'`, // not verified | verified | disable
+          },
+          {
+            name: 'password',
             type: 'varchar',
           },
           {
@@ -47,6 +53,12 @@ export class CreateUserTable1700000000000 implements MigrationInterface {
             name: 'updatedAt',
             type: 'timestamp',
             default: 'NOW()',
+          },
+        ],
+        uniques: [
+          {
+            name: 'UQ_user_login',
+            columnNames: ['login'],
           },
         ],
       }),

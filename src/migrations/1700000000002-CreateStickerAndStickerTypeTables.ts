@@ -28,7 +28,11 @@ export class CreateStickerAndStickerTypeTable1700000000002
           {
             name: 'sticker_type_id',
             type: 'uuid',
-            isNullable: false,
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            default: `'active'`,
           },
           {
             name: 'name',
@@ -98,17 +102,13 @@ export class CreateStickerAndStickerTypeTable1700000000002
             default: 'gen_random_uuid()',
           },
           {
-            name: 'code',
-            type: 'varchar',
-            isUnique: true,
-          },
-          {
             name: 'name',
             type: 'varchar',
           },
           {
             name: 'status',
             type: 'varchar',
+            default: `'active'`,
           },
           {
             name: 'description',
@@ -168,6 +168,7 @@ export class CreateStickerAndStickerTypeTable1700000000002
     await queryRunner.createForeignKey(
       'sticker',
       new TableForeignKey({
+        name: 'FK_sticker_user',
         columnNames: ['user_id'],
         referencedTableName: 'user',
         referencedColumnNames: ['id'],
@@ -179,6 +180,7 @@ export class CreateStickerAndStickerTypeTable1700000000002
     await queryRunner.createForeignKey(
       'sticker',
       new TableForeignKey({
+        name: 'FK_sticker_sticker_type',
         columnNames: ['sticker_type_id'],
         referencedTableName: 'sticker_type',
         referencedColumnNames: ['id'],
@@ -190,6 +192,7 @@ export class CreateStickerAndStickerTypeTable1700000000002
     await queryRunner.createForeignKey(
       'sticker_type',
       new TableForeignKey({
+        name: 'FK_sticker_type_sponsor_user',
         columnNames: ['sponsor_id'],
         referencedTableName: 'user',
         referencedColumnNames: ['id'],

@@ -73,17 +73,14 @@ export class CreateOrderAndOrderItemTables1700000000003
           {
             name: 'order_id',
             type: 'uuid',
-            isNullable: false,
           },
           {
             name: 'sticker_id',
             type: 'uuid',
-            isNullable: false,
           },
           {
             name: 'place_id',
             type: 'uuid',
-            isNullable: true,
           },
           {
             name: 'quantity',
@@ -109,10 +106,11 @@ export class CreateOrderAndOrderItemTables1700000000003
     await queryRunner.createForeignKey(
       'order_item',
       new TableForeignKey({
+        name: 'FK_order_item_order',
         columnNames: ['order_id'],
         referencedTableName: 'order',
         referencedColumnNames: ['id'],
-        onDelete: 'CASCADE', // як у ентіті
+        onDelete: 'CASCADE',
       }),
     );
 
@@ -120,6 +118,7 @@ export class CreateOrderAndOrderItemTables1700000000003
     await queryRunner.createForeignKey(
       'order_item',
       new TableForeignKey({
+        name: 'FK_order_item_sticker',
         columnNames: ['sticker_id'],
         referencedTableName: 'sticker',
         referencedColumnNames: ['id'],
@@ -131,10 +130,11 @@ export class CreateOrderAndOrderItemTables1700000000003
     await queryRunner.createForeignKey(
       'order_item',
       new TableForeignKey({
+        name: 'FK_order_item_place',
         columnNames: ['place_id'],
         referencedTableName: 'place',
         referencedColumnNames: ['id'],
-        onDelete: 'SET NULL', // як у ентіті
+        onDelete: 'RESTRICT',
       }),
     );
 
@@ -142,6 +142,7 @@ export class CreateOrderAndOrderItemTables1700000000003
     await queryRunner.createForeignKey(
       'order',
       new TableForeignKey({
+        name: 'FK_order_user',
         columnNames: ['user_id'],
         referencedTableName: 'user',
         referencedColumnNames: ['id'],
@@ -163,11 +164,11 @@ export class CreateOrderAndOrderItemTables1700000000003
     await queryRunner.dropTable('order_item');
 
     const orderTable = await queryRunner.getTable('order');
-    const userFk = orderTable?.foreignKeys.find((fk) =>
-      fk.columnNames.includes('user_id'),
-    );
-    if (userFk) {
-      await queryRunner.dropForeignKey('order', userFk);
+
+    if (orderTable) {
+      for (const fk of orderTable.foreignKeys) {
+        await queryRunner.dropForeignKey('order', fk);
+      }
     }
 
     await queryRunner.dropTable('order');

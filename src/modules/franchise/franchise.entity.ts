@@ -16,15 +16,18 @@ export class Franchise {
   @Column()
   name: string;
 
+  @Column({ default: 'active' })
+  status: string;
+
   @Column({ nullable: true })
   logoUrl?: string;
-
-  @OneToMany(() => Place, (place) => place.franchise)
-  places: Place[];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Place, (place) => place.franchise)
+  places: Place[];
 }

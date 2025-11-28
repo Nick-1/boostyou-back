@@ -27,7 +27,10 @@ export class User {
   role: UserRole;
 
   @Column()
-  passwordHash: string;
+  status: string;
+
+  @Column()
+  password: string;
 
   @Column({ name: 'first_name', nullable: true })
   firstName?: string;

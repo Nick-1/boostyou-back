@@ -16,11 +16,11 @@ export class StickerType {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  code: string;
-
   @Column()
   name: string;
+
+  @Column({ default: 'active' })
+  status: string;
 
   @Column({ nullable: true })
   description?: string;
@@ -40,22 +40,25 @@ export class StickerType {
   @Column({ name: 'sponsor_id', nullable: true })
   sponsorId?: string | null;
 
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'sponsor_id' })
-  sponsor?: User | null;
-
   @Column({ type: 'int', nullable: true })
   limit?: number | null;
 
   @Column({ name: 'used', type: 'int', default: 0 })
   used: number;
 
-  @OneToMany(() => Sticker, (sticker) => sticker.stickerType)
-  stickers: Sticker[];
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'sponsor_id' })
+  sponsor?: User | null;
+
+  @OneToMany(() => Sticker, (sticker) => sticker.stickerType)
+  stickers: Sticker[];
 }

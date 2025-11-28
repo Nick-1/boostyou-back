@@ -38,6 +38,9 @@ export class Place {
   @Column()
   state: string;
 
+  @Column()
+  status: string;
+
   @Column({ type: 'jsonb' })
   location: Location;
 

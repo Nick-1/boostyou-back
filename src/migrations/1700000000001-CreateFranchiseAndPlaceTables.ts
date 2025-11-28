@@ -25,6 +25,11 @@ export class CreateFranchiseAndPlaceTables1700000000001
             type: 'varchar',
           },
           {
+            name: 'status',
+            type: 'varchar',
+            default: `'active'`,
+          },
+          {
             name: 'logoUrl',
             type: 'varchar',
             isNullable: true,
@@ -58,6 +63,11 @@ export class CreateFranchiseAndPlaceTables1700000000001
             name: 'franchise_id',
             type: 'uuid',
             isNullable: true,
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+            default: `'active'`,
           },
           {
             name: 'name',
@@ -103,10 +113,10 @@ export class CreateFranchiseAndPlaceTables1700000000001
       }),
     );
 
-    // FK on franchise(id)
     await queryRunner.createForeignKey(
       'place',
       new TableForeignKey({
+        name: 'FK_place_franchise',
         columnNames: ['franchise_id'],
         referencedTableName: 'franchise',
         referencedColumnNames: ['id'],
@@ -118,16 +128,13 @@ export class CreateFranchiseAndPlaceTables1700000000001
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('place');
     if (table) {
-      const fk = table.foreignKeys.find((f) =>
-        f.columnNames.includes('franchise_id'),
-      );
+      const fk = table.foreignKeys.find((f) => f.name === 'FK_place_franchise');
       if (fk) {
         await queryRunner.dropForeignKey('place', fk);
       }
     }
 
     await queryRunner.dropTable('place');
-
     await queryRunner.dropTable('franchise');
   }
 }

@@ -20,8 +20,8 @@ export class OrderItem {
   @Column({ name: 'sticker_id' })
   stickerId: string;
 
-  @Column({ name: 'place_id', nullable: true })
-  placeId?: string | null;
+  @Column({ name: 'place_id' })
+  placeId: string;
 
   @Column({ type: 'int' })
   quantity: number;
@@ -43,7 +43,7 @@ export class OrderItem {
   sticker: Sticker;
 
   @ManyToOne(() => Place, (place) => place.orderItems, {
-    onDelete: 'SET NULL',
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'place_id' })
   place: Place;

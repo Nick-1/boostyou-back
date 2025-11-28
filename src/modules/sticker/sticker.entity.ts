@@ -23,6 +23,9 @@ export class Sticker {
   @Column({ name: 'sticker_type_id' })
   stickerTypeId: string;
 
+  @Column({ default: 'active' })
+  status: string;
+
   @Column()
   name: string;
 
@@ -31,6 +34,9 @@ export class Sticker {
 
   @Column({ name: 'highlighted_text', nullable: true })
   highlightedText?: string;
+
+  @Column({ name: 'highlighted_bg_color', nullable: true })
+  highlightedBgColor?: string;
 
   @Column({ nullable: true })
   promo?: string;
@@ -47,14 +53,17 @@ export class Sticker {
   @Column({ name: 'sticker_form' })
   stickerForm: string;
 
-  @Column({ name: 'highlighted_bg_color', nullable: true })
-  highlightedBgColor?: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => StickerType, (type) => type.stickers, {
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'sticker_type_id' })
+  stickerType: StickerType;
 
   @ManyToOne(() => User, (user) => user.stickers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
@@ -62,10 +71,4 @@ export class Sticker {
 
   @OneToMany(() => OrderItem, (item) => item.sticker)
   orderItems: OrderItem[];
-
-  @ManyToOne(() => StickerType, (type) => type.stickers, {
-    onDelete: 'RESTRICT',
-  })
-  @JoinColumn({ name: 'sticker_type_id' })
-  stickerType: StickerType;
 }
