@@ -6,10 +6,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Sticker } from '../sticker/sticker.entity';
 import { Order } from '../order/order.entity';
-import { UserRole } from '../../common/enums';
 import { StickerType } from '../sticker-type/sticker-type.entity';
+
+import { UserRole, UserStatus } from './enums';
 
 @Entity('user')
 export class User {
@@ -26,8 +28,8 @@ export class User {
   })
   role: UserRole;
 
-  @Column()
-  status: string;
+  @Column({ default: UserStatus.NOT_VERIFIED, enum: UserStatus })
+  status: UserStatus;
 
   @Column()
   password: string;

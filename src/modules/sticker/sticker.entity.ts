@@ -11,6 +11,7 @@ import {
 import { User } from '../user/user.entity';
 import { OrderItem } from '../order-item/order-item.entity';
 import { StickerType } from '../sticker-type/sticker-type.entity';
+import { EntityStatus } from '../../common/enums';
 
 @Entity('sticker')
 export class Sticker {
@@ -23,8 +24,8 @@ export class Sticker {
   @Column({ name: 'sticker_type_id' })
   stickerTypeId: string;
 
-  @Column({ default: 'active' })
-  status: string;
+  @Column({ default: EntityStatus.ACTIVE, enum: EntityStatus })
+  status: EntityStatus;
 
   @Column()
   name: string;

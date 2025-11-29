@@ -87,7 +87,7 @@ export class CreateOrderAndOrderItemTables1700000000003
             type: 'int',
           },
           {
-            name: 'unitPrice',
+            name: 'itemPrice',
             type: 'numeric',
             precision: 10,
             scale: 2,

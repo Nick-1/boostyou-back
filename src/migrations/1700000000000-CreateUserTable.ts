@@ -28,7 +28,7 @@ export class CreateUserTable1700000000000 implements MigrationInterface {
             name: 'status',
             type: 'varchar',
             length: '30',
-            default: `'not verified'`, // not verified | verified | disable
+            default: `'not verified'`,
           },
           {
             name: 'password',

@@ -11,6 +11,7 @@ import {
 import { Franchise } from '../franchise/franchise.entity';
 import { Location } from '../../common/types';
 import { OrderItem } from '../order-item/order-item.entity';
+import { EntityStatus } from '../../common/enums';
 
 @Entity('place')
 export class Place {
@@ -38,8 +39,8 @@ export class Place {
   @Column()
   state: string;
 
-  @Column()
-  status: string;
+  @Column({ default: EntityStatus.ACTIVE, enum: EntityStatus })
+  status: EntityStatus;
 
   @Column({ type: 'jsonb' })
   location: Location;

@@ -1,4 +1,4 @@
-import { UserRole } from '../../../common/enums';
+import { UserRole } from '../enums';
 
 export class UserResponseDto {
   id: string;

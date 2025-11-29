@@ -6,7 +6,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { Place } from '../place/place.entity';
+import { EntityStatus } from '../../common/enums';
 
 @Entity('franchise')
 export class Franchise {
@@ -16,8 +18,8 @@ export class Franchise {
   @Column()
   name: string;
 
-  @Column({ default: 'active' })
-  status: string;
+  @Column({ default: EntityStatus.ACTIVE, enum: EntityStatus })
+  status: EntityStatus;
 
   @Column({ nullable: true })
   logoUrl?: string;

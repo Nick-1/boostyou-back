@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { OrderItem } from '../order-item/order-item.entity';
+import { OrderStatus } from './enums';
 
 @Entity('order')
 export class Order {
@@ -25,8 +26,8 @@ export class Order {
   @Column({ default: 'USD' })
   currency: string;
 
-  @Column({ type: 'varchar' })
-  status: string; // 'pending', 'paid', ...
+  @Column({ type: 'varchar', enum: OrderStatus })
+  status: OrderStatus;
 
   @Column({ nullable: true })
   comment?: string;

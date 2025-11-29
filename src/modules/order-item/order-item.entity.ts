@@ -27,10 +27,10 @@ export class OrderItem {
   quantity: number;
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
-  unitPrice: string;
+  itemPrice: number;
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
-  subtotal: string;
+  subtotal: number;
 
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'order_id' })

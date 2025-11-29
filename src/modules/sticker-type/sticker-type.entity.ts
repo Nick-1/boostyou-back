@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Sticker } from '../sticker/sticker.entity';
+import { EntityStatus } from '../../common/enums';
 
 @Entity('sticker_type')
 export class StickerType {
@@ -19,8 +20,8 @@ export class StickerType {
   @Column()
   name: string;
 
-  @Column({ default: 'active' })
-  status: string;
+  @Column({ default: EntityStatus.ACTIVE, enum: EntityStatus })
+  status: EntityStatus;
 
   @Column({ nullable: true })
   description?: string;
@@ -35,7 +36,7 @@ export class StickerType {
   bgColor?: string;
 
   @Column({ name: 'price', type: 'numeric', precision: 10, scale: 2 })
-  price: string;
+  price: number;
 
   @Column({ name: 'sponsor_id', nullable: true })
   sponsorId?: string | null;
