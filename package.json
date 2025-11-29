@@ -16,7 +16,8 @@
     "typeorm": "TS_NODE_TRANSPILE_ONLY=1 ts-node ./node_modules/typeorm/cli.js",
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run -d ./typeorm.config.js",
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert -d ./typeorm.config.js",
-    "migration:run:local": "npm run build && npm run migration:run"
+    "migration:run:local": "npm run build && npm run migration:run",
+    "seed:dev": "npm run build && node dist/scripts/seed-dev.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

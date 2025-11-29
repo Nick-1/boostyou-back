@@ -60,7 +60,7 @@ export class OrderService {
       status: OrderStatus.PENDING,
       currency: Currency.USD,
       comment: dto.comment,
-      totalPrice: '0.00',
+      totalPrice: 0,
     });
 
     await this.orderRepo.save(order);
@@ -72,7 +72,7 @@ export class OrderService {
       stickers,
     );
 
-    order.totalPrice = totalItemsPrice.toFixed(2);
+    order.totalPrice = totalItemsPrice;
     await this.orderRepo.save(order);
 
     return this.findById(order.id);

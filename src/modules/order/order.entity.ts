@@ -21,7 +21,7 @@ export class Order {
   userId: string;
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
-  totalPrice: string;
+  totalPrice: number;
 
   @Column({ default: 'USD' })
   currency: string;
