@@ -7,7 +7,12 @@ async function bootstrap() {
   console.info('process.env.APP_PORT', process.env.APP_PORT);
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://boostyou.us'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5175',
+      'https://boostyou.us',
+      'https://business.boostyou.us',
+    ],
     methods: 'GET,POST,PUT,DELETE',
   });
 
