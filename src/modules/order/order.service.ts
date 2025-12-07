@@ -1,16 +1,20 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
+
+import { Currency } from '../../common/enums';
+import { OrderItemService } from '../order-item/order-item.service';
 
 import { Order } from './order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
-
-import { Sticker } from '../sticker/sticker.entity';
-import { Place } from '../place/place.entity';
-import { OrderItem } from '../order-item/order-item.entity';
-import { OrderItemService } from '../order-item/order-item.service';
 import { OrderStatus } from './enums';
-import { Currency } from '../../common/enums';
+import { OrderFilterParams } from './types';
+import { OrderRepository } from './order.repository';
+import { toGetOrdersResponseDto } from './mappers';
+import { OrderListResponseDto } from './dto/get-orders-response.dto';
+import { StickerService } from '../sticker/sticker.service';
+import { PlaceService } from '../place/place.service';
+import { extractUniqueIds } from '../../common/helpers';
 
 @Injectable()
 export class OrderService {
@@ -18,42 +22,36 @@ export class OrderService {
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
 
-    @InjectRepository(OrderItem)
-    private readonly orderItemRepo: Repository<OrderItem>,
-
-    @InjectRepository(Sticker)
-    private readonly stickerRepo: Repository<Sticker>,
-
-    @InjectRepository(Place)
-    private readonly placeRepo: Repository<Place>,
-
     @Inject()
     private readonly orderItemService: OrderItemService,
+
+    @Inject()
+    private readonly stickerService: StickerService,
+
+    @Inject()
+    private readonly placeService: PlaceService,
+
+    private readonly orderRepository: OrderRepository,
   ) {}
 
-  public async createOrder(dto: CreateOrderDto): Promise<Order> {
+  public async getListByParams(
+    params: OrderFilterParams,
+  ): Promise<OrderListResponseDto> {
+    const response = await this.orderRepository.findByParams(params);
+
+    return toGetOrdersResponseDto(response);
+  }
+
+  public async create(dto: CreateOrderDto): Promise<Order> {
     if (!dto.items?.length) {
       throw new NotFoundException('Order must contain at least one item');
     }
 
-    const stickerIds = Array.from(new Set(dto.items.map((i) => i.stickerId)));
-    const stickers = await this.stickerRepo.find({
-      where: { id: In(stickerIds) },
-      relations: { stickerType: true },
-    });
+    const stickerIds = extractUniqueIds(dto.items, 'stickerId');
+    const stickers = await this.stickerService.findByIdList(stickerIds);
 
-    if (stickers.length !== stickerIds.length) {
-      throw new NotFoundException('Some stickers do not exist');
-    }
-
-    const placeIds = Array.from(new Set(dto.items.map((i) => i.placeId)));
-    const places = await this.placeRepo.find({
-      where: { id: In(placeIds) },
-    });
-
-    if (places.length !== placeIds.length) {
-      throw new NotFoundException('Some places do not exist');
-    }
+    const placeIds = extractUniqueIds(dto.items, 'placeId');
+    const places = await this.placeService.findByIdList(placeIds);
 
     const order = this.orderRepo.create({
       userId: dto.userId,
@@ -79,36 +77,10 @@ export class OrderService {
   }
 
   public async findById(id: string): Promise<Order> {
-    const order = await this.orderRepo.findOne({
-      where: { id },
-      relations: {
-        user: true,
-        items: {
-          sticker: {
-            stickerType: true,
-          },
-          place: true,
-        },
-      },
-    });
-
-    if (!order) {
-      throw new NotFoundException(`Order ${id} not found`);
-    }
-
-    return order;
+    return this.orderRepository.findById(id);
   }
 
-  public async findByUser(userId: string): Promise<Order[]> {
-    return this.orderRepo.find({
-      where: { userId },
-      relations: {
-        items: {
-          sticker: { stickerType: true },
-          place: true,
-        },
-      },
-      order: { createdAt: 'DESC' },
-    });
+  public async findByUserId(userId: string): Promise<Order[]> {
+    return this.orderRepository.findByUserId(userId);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { StickerType } from '../sticker-type/sticker-type.entity';
 import { EntityStatus } from '../../common/enums';
@@ -75,5 +75,18 @@ export class StickerService {
       relations: { user: true },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  public async findByIdList(ids: string[]): Promise<Sticker[]> {
+    const stickers = await this.stickerRepo.find({
+      where: { id: In(ids) },
+      relations: { stickerType: true },
+    });
+
+    if (stickers.length !== ids.length) {
+      throw new NotFoundException('Some stickers do not exist');
+    }
+
+    return stickers;
   }
 }

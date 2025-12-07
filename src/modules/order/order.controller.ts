@@ -6,20 +6,35 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './order.entity';
+import { GetOrdersQueryDto } from './dto/get-orders.dto';
 
 @Controller('/api/v1/orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  @Get()
+  public async getList(@Query() query: GetOrdersQueryDto) {
+    console.info('query=========', query);
+
+    return this.orderService.getListByParams({
+      orderStatus: query.orderStatus,
+      userLogin: query.userLogin,
+      places: query.places,
+      page: query.page,
+      limit: query.limit,
+    });
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async createOrder(@Body() dto: CreateOrderDto): Promise<Order> {
-    return this.orderService.createOrder(dto);
+    return this.orderService.create(dto);
   }
 
   @Get('/:id')
@@ -30,9 +45,9 @@ export class OrderController {
 
   @Get('/user/:userId')
   @HttpCode(HttpStatus.OK)
-  public async getOrdersByUser(
+  public async getOrdersByUserId(
     @Param('userId') userId: string,
   ): Promise<Order[]> {
-    return this.orderService.findByUser(userId);
+    return this.orderService.findByUserId(userId);
   }
 }

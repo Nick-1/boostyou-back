@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Place } from './place.entity';
 import { CreatePlaceDto } from './dto/create-place.dto';
@@ -95,5 +95,17 @@ export class PlaceService {
       where: { franchiseId },
       relations: { franchise: true },
     });
+  }
+
+  public async findByIdList(ids: string[]): Promise<Place[]> {
+    const places = await this.placeRepo.find({
+      where: { id: In(ids) },
+    });
+
+    if (places.length !== ids.length) {
+      throw new NotFoundException('Some places do not exist');
+    }
+
+    return places;
   }
 }

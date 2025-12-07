@@ -23,6 +23,14 @@ export class UserController {
     return this.userService.findById(id);
   }
 
+  // @Get('/ping')
+  // public ping() {
+  //   return {
+  //     status: 200,
+  //     message: 'Pong!',
+  //   };
+  // }
+
   @Post()
   public create(@Body() body: CreateUserDto) {
     return this.userService.create(body);
