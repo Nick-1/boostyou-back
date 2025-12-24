@@ -8,9 +8,14 @@ import {
   Min,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
+
 import { OrderStatus } from '../enums';
 
 export class GetOrdersQueryDto {
+  @IsOptional()
+  @IsString()
+  orderId?: string;
+
   @IsOptional()
   @IsEnum(OrderStatus)
   orderStatus?: OrderStatus;

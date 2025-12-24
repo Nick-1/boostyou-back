@@ -2,56 +2,57 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  Index,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Sticker } from '../sticker/sticker.entity';
-import { Order } from '../order/order.entity';
-import { StickerType } from '../sticker-type/sticker-type.entity';
-
 import { UserRole, UserStatus } from './enums';
+import { Customer } from '../customer/customer.entity';
 
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  declare public id: string;
 
-  @Column({ unique: true })
-  login: string;
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 255 })
+  declare public login: string;
 
+  @Column({ name: 'password_hash', type: 'varchar', length: 255 })
+  declare public passwordHash: string;
+
+  @Index()
   @Column({
-    type: 'varchar',
-    length: 20,
+    type: 'enum',
+    enum: UserRole,
     default: UserRole.CUSTOMER,
   })
-  role: UserRole;
+  declare public role: UserRole;
 
-  @Column({ default: UserStatus.NOT_VERIFIED, enum: UserStatus })
-  status: UserStatus;
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    enumName: 'user_status_enum',
+    default: UserStatus.NOT_VERIFIED,
+  })
+  declare status: UserStatus;
 
-  @Column()
-  password: string;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'now()',
+  })
+  declare public createdAt: Date;
 
-  @Column({ name: 'first_name', nullable: true })
-  firstName?: string;
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'now()',
+  })
+  declare public updatedAt: Date;
 
-  @Column({ name: 'last_name', nullable: true })
-  lastName?: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @OneToMany(() => Sticker, (sticker) => sticker.user)
-  stickers: Sticker[];
-
-  @OneToMany(() => Order, (order) => order.user)
-  orders: Order[];
-
-  @OneToMany(() => StickerType, (type) => type.sponsor)
-  sponsoredStickerTypes: StickerType[];
+  @OneToOne(() => Customer, (c) => c.user)
+  declare public customer?: Customer;
 }

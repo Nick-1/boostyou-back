@@ -2,6 +2,7 @@ import { OrderStatus } from '../enums';
 import { Order } from '../order.entity';
 
 export interface OrderFilterParams {
+  orderId?: string;
   orderStatus?: OrderStatus;
   userLogin?: string;
   places?: string[];

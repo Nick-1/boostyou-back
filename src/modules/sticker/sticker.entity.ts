@@ -2,74 +2,88 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../user/user.entity';
+import { Customer } from '../customer/customer.entity';
+import { StickerTemplate } from '../sticker-template/sticker-template.entity';
 import { OrderItem } from '../order-item/order-item.entity';
-import { StickerType } from '../sticker-type/sticker-type.entity';
 import { EntityStatus } from '../../common/enums';
 
 @Entity('sticker')
 export class Sticker {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  declare public id: string;
 
-  @Column({ name: 'user_id' })
-  userId: string;
+  @Index()
+  @Column({ name: 'customer_id', type: 'uuid' })
+  declare public customerId: string;
 
-  @Column({ name: 'sticker_type_id' })
-  stickerTypeId: string;
+  @Column({ type: 'varchar', length: 255 })
+  declare public name: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  declare public title?: string | null;
+
+  @Column({
+    name: 'highlighted_text',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  declare public highlightedText?: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  declare public discount?: string | null;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  declare public promo?: string | null;
+
+  @Column({ name: 'logo_url', type: 'text', nullable: true })
+  declare public logoUrl?: string | null;
+
+  @Column({ name: 'qr_url', type: 'text', nullable: true })
+  declare public qrUrl?: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  declare public address?: string | null;
+
+  @Column({ type: 'varchar', length: 64, nullable: true })
+  declare public phone?: string | null;
+
+  @Index()
+  @Column({ name: 'template_key', type: 'varchar', length: 128 })
+  declare public templateKey: string;
 
   @Column({ default: EntityStatus.ACTIVE, enum: EntityStatus })
   status: EntityStatus;
 
-  @Column()
-  name: string;
-
-  @Column()
-  title: string;
-
-  @Column({ name: 'highlighted_text', nullable: true })
-  highlightedText?: string;
-
-  @Column({ name: 'highlighted_bg_color', nullable: true })
-  highlightedBgColor?: string;
-
-  @Column({ nullable: true })
-  promo?: string;
-
-  @Column({ name: 'qr_code_link', nullable: true })
-  qrCodeLink?: string;
-
-  @Column({ nullable: true })
-  phone?: string;
-
-  @Column({ nullable: true })
-  address?: string;
-
-  @Column({ name: 'sticker_form' })
-  stickerForm: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => StickerType, (type) => type.stickers, {
-    onDelete: 'RESTRICT',
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'now()',
   })
-  @JoinColumn({ name: 'sticker_type_id' })
-  stickerType: StickerType;
+  declare public createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.stickers, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'now()',
+  })
+  declare public updatedAt: Date;
 
-  @OneToMany(() => OrderItem, (item) => item.sticker)
-  orderItems: OrderItem[];
+  @ManyToOne(() => Customer, (c) => c.stickers, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'customer_id' })
+  declare public customer: Customer;
+
+  @ManyToOne(() => StickerTemplate, (t) => t.stickers, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'template_key', referencedColumnName: 'key' })
+  declare public template: StickerTemplate;
+
+  @OneToMany(() => OrderItem, (oi) => oi.sticker)
+  declare public orderItems: OrderItem[];
 }

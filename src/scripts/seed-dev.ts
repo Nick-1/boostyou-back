@@ -7,7 +7,6 @@ const AppDataSource = require('../../typeorm.config.js');
 import { User } from '../modules/user/user.entity';
 import { Franchise } from '../modules/franchise/franchise.entity';
 import { Place } from '../modules/place/place.entity';
-import { StickerType } from '../modules/sticker-type/sticker-type.entity';
 import { Sticker } from '../modules/sticker/sticker.entity';
 import { Order } from '../modules/order/order.entity';
 import { OrderItem } from '../modules/order-item/order-item.entity';
@@ -75,7 +74,7 @@ async function seed() {
   // ---------------------
   // 4) STICKER TYPES
   // ---------------------
-  const stickerTypeRepo = AppDataSource.getRepository(StickerType);
+  const stickerTypeRepo = AppDataSource.getRepository();
   const stickerTypes = await stickerTypeRepo.save([
     {
       name: 'Default White',

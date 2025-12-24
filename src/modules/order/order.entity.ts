@@ -2,46 +2,54 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../user/user.entity';
-import { OrderItem } from '../order-item/order-item.entity';
 import { OrderStatus } from './enums';
+import { Customer } from '../customer/customer.entity';
+import { OrderItem } from '../order-item/order-item.entity';
 
 @Entity('order')
 export class Order {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  declare public id: string;
 
-  @Column({ name: 'user_id' })
-  userId: string;
+  @Index()
+  @Column({ name: 'customer_id', type: 'uuid' })
+  declare public customerId: string;
 
-  @Column({ type: 'numeric', precision: 10, scale: 2 })
-  totalPrice: number;
+  @ManyToOne(() => Customer, (c) => c.orders, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'customer_id' })
+  declare public customer: Customer;
 
-  @Column({ default: 'USD' })
-  currency: string;
-
+  @Index()
   @Column({ type: 'varchar', enum: OrderStatus })
-  status: OrderStatus;
+  declare public status: OrderStatus;
 
-  @Column({ nullable: true })
-  comment?: string;
+  @Column({ name: 'total_price', type: 'numeric', precision: 10, scale: 2 })
+  declare public totalPrice: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ type: 'char', length: 3, default: 'USD' })
+  declare public currency: string;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => OrderItem, (oi) => oi.order, { cascade: true })
+  declare public items: OrderItem[];
 
-  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
-  items: OrderItem[];
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'now()',
+  })
+  declare public createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'now()',
+  })
+  declare public updatedAt: Date;
 }
